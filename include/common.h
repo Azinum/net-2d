@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #define PI32 3.14159265359f
 #define MAX_PATH_SIZE 512
