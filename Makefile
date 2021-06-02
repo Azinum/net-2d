@@ -8,7 +8,11 @@ prepare:
 	mkdir -p ${BUILD}
 
 compile:
-	${CC} ${SRC} ${C_FLAGS} ${LIB}
+	${CC} ${SRC} ${C_FLAGS} ${LIB} ${O_RELEASE}
+
+debug:
+	${CC} ${SRC} ${C_FLAGS} ${LIB} ${O_DEBUG}
+	gdb ./${BUILD}/${PROG}
 
 run:
 	./${BUILD}/${PROG}

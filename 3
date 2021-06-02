@@ -1,0 +1,97 @@
+// bmp.c
+
+#include "common.h"
+#include "image.h"
+#include "bmp.h"
+
+const u16 bitmap_file_type = ('B' << 0) | ('M' << 8);
+
+typedef struct BMP_file_header {
+  u16 file_type;
+  u32 file_size;
+  u16 reserved1;
+  u16 reserved2;
+  u32 offset; // Offset to pixel data from the beginning of the file
+} __attribute__((packed)) BMP_file_header;
+
+typedef struct BMP_header {
+  u32 size;
+  i32 width;
+  i32 height;
+  u16 planes;
+  u16 bits_per_pixel;
+  u32 compression;
+  u32 bmp_size;
+  i32 horizontal_resolution;
+  i32 vertical_resolution;
+  u32 colors_used;
+  u32 color_important;
+  u32 red_mask;
+  u32 green_mask;
+  u32 blue_mask;
+} __attribute__((packed)) BMP_header;
+
+static i32 iterate_file(void* data, i32 size, FILE* fp);
+
+i32 iterate_file(void* data, i32 size, FILE* fp) {
+  return fread(data, size, 1, fp) == size;
+}
+
+// Supports only uncompressed 24-bit color depth
+i32 bmp_load_from_path(const char* path, Image* image) {
+  i32 result = NoError;
+  FILE* fp = fopen(path, "r");
+  if (!fp) {
+    return Error;
+  }
+  BMP_file_header file_header = {};
+  BMP_header header = {};
+
+  iterate_file(&file_header, sizeof(file_header), fp);
+  iterate_file(&header, sizeof(header), fp);
+
+  if (file_header.file_type == bitmap_file_type) {
+    if (file_header.reserved1 == 0 && file_header.reserved2 == 0) {
+      if (header.compression == 0) {
+        i32 bytes_per_pixel = header.bits_per_pixel / 8;
+        i32 width = header.width;
+        i32 height = header.height;
+        // TODO(lucas): Negative height (data is ordered from top to bottom, instead of bottom to top)
+        // printf("width: %i, height: %i, bytes per pixel: %i\n", width, height, bytes_per_pixel);
+        if (image_init(width, height, 4, image) == NoError) {
+          fseek(fp, file_header.offset, SEEK_SET);
+          // Reading row by row, from bottom to top
+
+          i32 row_size = width * bytes_per_pixel;
+          i32 col_size = height * bytes_per_pixel;
+          Color_rgba* iterator = (Color_rgba*)&image->data[0];
+          for (i32 row = 0; row < height; ++row) {
+            for (i32 col = 0; col < width; ++col) {
+              iterate_file(iterator, bytes_per_pixel, fp);
+              iterator++;
+            }
+          }
+        }
+      }
+      else {
+        // No compression supported
+        result = Error;
+        goto done;
+      }
+    }
+    else {
+      // Invalid bmp file
+      result = Error;
+      goto done;
+    }
+  }
+  else {
+    // Invalid bmp file, handle
+    result = Error;
+    goto done;
+  }
+
+done:
+  fclose(fp);
+  return result;
+}

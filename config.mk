@@ -16,5 +16,8 @@ SRC=${wildcard src/*.c}
 
 LIB=-lm -lpthread -I${X11_INC} -L${X11_LIB} -lX11
 
-C_FLAGS=-o ${BUILD}/${PROG} -I${INC} -O2 -Wall
+C_FLAGS=-o ${BUILD}/${PROG} -I${INC} -Wall
 
+O_DEBUG=-O0 -g
+
+O_RELEASE=-O2

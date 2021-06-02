@@ -116,8 +116,8 @@ i32 platform_process_events() {
 }
 
 void platform_swap_buffers(struct Render_state* renderer) {
-  win.image->data = (void*)renderer->framebuffer.data;
-  XPutImage(win.display, win.window, win.graphics_context, win.image, 0, 0, 0, 0, renderer->framebuffer.width, renderer->framebuffer.height);
+  win.image->data = (void*)renderer->framebuffer->data;
+  XPutImage(win.display, win.window, win.graphics_context, win.image, 0, 0, 0, 0, renderer->framebuffer->width, renderer->framebuffer->height);
   win.image->data = NULL;
   XSync(win.display, False);
 }

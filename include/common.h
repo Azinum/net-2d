@@ -9,6 +9,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include <sys/time.h>
+
 #define PI32 3.14159265359f
 #define MAX_PATH_SIZE 512
 #define ARRAY_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
@@ -35,5 +37,7 @@ typedef double r64;
 #else
   #define errprintf(Format, ...) fprintf(stderr, Format, ##__VA_ARGS__)
 #endif
+
+char* get_extension(const char* path);
 
 #endif

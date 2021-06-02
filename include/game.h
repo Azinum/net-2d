@@ -6,6 +6,7 @@
 #include "common.h"
 #include "config.h"
 #include "memory.h"
+#include "math_util.h"
 #include "renderer.h"
 
 typedef struct Game_state {
