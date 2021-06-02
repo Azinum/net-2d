@@ -32,6 +32,17 @@ typedef uint8_t u8;
 typedef float r32;
 typedef double r64;
 
+typedef union v2 {
+  struct {
+    float x, y;
+  };
+  struct {
+    float w, h;
+  };
+} v2;
+
+#define V2(X, Y) (v2) {{ .x = X, .y = Y, }}
+
 #if 1
   #define errprintf(Format, ...) fprintf(stderr, "%s:%s:%i: " Format, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else

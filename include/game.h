@@ -7,15 +7,25 @@
 #include "config.h"
 #include "memory.h"
 #include "math_util.h"
+#include "entity.h"
 #include "renderer.h"
+
+#define MAX_ENTITY 128
 
 typedef struct Game_state {
   float dt;
-  u8 is_running;
+  float time_stamp;
+  u8 running;
+  u8 client;
+  Entity entities[MAX_ENTITY];
+  u32 entity_count;
+  u32 id;
 } Game_state;
 
 extern Game_state game_state;
 
 i32 game_start(i32 argc, char** argv);
+
+Entity* game_add_entity();
 
 #endif

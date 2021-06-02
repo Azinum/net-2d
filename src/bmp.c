@@ -37,7 +37,7 @@ i32 iterate_file(void* data, i32 size, FILE* fp) {
   return fread(data, size, 1, fp) == size;
 }
 
-// Supports only uncompressed 24-bit color depth
+// NOTE(lucas): Supports only uncompressed 24-bit color depth
 i32 bmp_load_from_path(const char* path, Image* image) {
   i32 result = NoError;
   FILE* fp = fopen(path, "r");

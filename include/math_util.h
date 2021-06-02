@@ -15,13 +15,4 @@
   #include <xmmintrin.h>
 #endif
 
-typedef union v2 {
-  struct {
-    i32 x;
-    i32 y;
-  };
-} v2;
-
-#define V2(X, Y) (v2) {{ .x = X, .y = Y, }}
-
 #endif
