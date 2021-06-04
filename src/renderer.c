@@ -7,6 +7,7 @@
 
 Render_state render_state = {};
 Render_state* renderer = &render_state;
+Image shroom = {0};
 
 static void switch_fb_target(Render_state* renderer);
 
@@ -20,13 +21,14 @@ i32 renderer_init(struct Render_state* renderer, i32 width, i32 height) {
   image_init(width, height, 4, &renderer->fb[0]);
   image_init(width, height, 4, &renderer->fb[1]);
   switch_fb_target(renderer);
+  image_load("resource/sprite/shroom.bmp", &shroom);
   return NoError;
 }
 
 void renderer_swap_buffers(struct Render_state* renderer) {
   switch_fb_target(renderer);
   platform_swap_buffers(renderer);
-  image_clear(renderer->framebuffer, ColorRGB(0, 0, 0));
+  image_clear(renderer->framebuffer, ColorRGB(255, 255, 255));
 }
 
 void render_quad(const v2 p, const v2 size, Color_rgba color) {
@@ -45,22 +47,37 @@ void render_quad(const v2 p, const v2 size, Color_rgba color) {
 void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint) {
   Image* framebuffer = renderer->framebuffer;
 
-  const u32 EliminationMask = (0xff << 0) | (0x0 << 8) | (0xff << 16) | (0x0 << 24);  // Mask to eliminate purple "transparent" pixels
+  // Mask to eliminate purple "transparent" pixels
+  const u32 EliminationMask = (0xff << 0) | (0x0 << 8) | (0xff << 16) | (0x0 << 24);
 
-  for (i32 y = 0; y < image->height; ++y) {
-    for (i32 x = 0; x < image->width; ++x) {
-      Color_rgba* pixel = image_grab_pixel(framebuffer, p.x + x, p.y + y);
-      Color_rgba* color = image_grab_pixel(image, x, y);
-      if (pixel && color) {
-        if (color->value != EliminationMask) {
-          *pixel = *color;
+  // TODO(lucas): Use screen boundaries to limit the area of pixels that we are iterating over
+
+  v2 uv = V2(0, 0);
+
+  for (i32 y = 0; y < size.w; ++y) {
+    uv.y = y / size.w;
+    for (i32 x = 0; x < size.h; ++x) {
+      uv.x = x / size.h;
+      i32 x_sample = ((i32)(uv.x * image->width) % image->width);
+      i32 y_sample = ((i32)(uv.y * image->height) % image->height);
+      Color_rgba* pixel = image_grab_pixel(framebuffer, x + p.x, y + p.y);
+      Color_rgba* texel = image_grab_pixel(image, x_sample, y_sample);
+
+      if (pixel && texel) {
+        if (texel->value != EliminationMask) {
+          *pixel = *texel;
         }
       }
     }
   }
 }
 
+void render_texture(u32 texture_id, const v2 p, const v2 size, Color_rgba tint) {
+  render_image(&shroom, p, size, tint);
+}
+
 void renderer_free(struct Render_state* renderer) {
   image_free(&renderer->fb[0]);
   image_free(&renderer->fb[1]);
+  image_free(&shroom);
 }

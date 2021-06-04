@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
+#include <unistd.h>
+#include <stdarg.h>
 #include <sys/time.h>
 
 #define PI32 3.14159265359f
@@ -50,5 +51,9 @@ typedef union v2 {
 #endif
 
 char* get_extension(const char* path);
+
+u8* write_byte(u8* buffer, u8 byte);
+
+u8* write_string(u8* buffer, i32 buffer_size, const char* format, ...);
 
 #endif

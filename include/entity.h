@@ -24,6 +24,7 @@ typedef struct Entity {
 } Entity;
 
 struct Game_state;
+extern u32 you;
 
 void entity_init(Entity* e, u32 id, v2 pos, v2 size, u32 flags, u32 type);
 

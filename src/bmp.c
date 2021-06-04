@@ -61,7 +61,7 @@ i32 bmp_load_from_path(const char* path, Image* image) {
           // Reading row by row, from bottom to top
           Color_rgba* start_pixel = (Color_rgba*)&image->data[0];
           // TODO(lucas): Handle negative height values (data is ordered from top to bottom, instead of bottom to top)
-          for (i32 y = height - 1; y > 0; --y) {
+          for (i32 y = height - 1; y >= 0; --y) {
             for (i32 x = 0; x < width; ++x) {
               iterate_file(start_pixel + (width * y + x), bytes_per_pixel, fp);
             }

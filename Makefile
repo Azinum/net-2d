@@ -16,3 +16,6 @@ debug:
 
 run:
 	./${BUILD}/${PROG}
+
+server:
+	./${BUILD}/${PROG} server

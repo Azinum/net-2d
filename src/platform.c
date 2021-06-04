@@ -122,6 +122,10 @@ void platform_swap_buffers(struct Render_state* renderer) {
   XSync(win.display, False);
 }
 
+void platform_set_window_title(const char* title) {
+  XStoreName(win.display, win.window, title);
+}
+
 void platform_close_window() {
   if (win.image) {
     XDestroyImage(win.image);

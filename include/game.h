@@ -13,9 +13,9 @@
 #define MAX_ENTITY 128
 
 typedef struct Game_state {
-  float dt;
-  float time_stamp;
-  u8 running;
+  double dt;
+  double time_stamp;
+  volatile u8 running;
   u8 client;
   Entity entities[MAX_ENTITY];
   u32 entity_count;
@@ -23,6 +23,7 @@ typedef struct Game_state {
 } Game_state;
 
 extern Game_state game_state;
+extern i32 socket_fd;
 
 i32 game_start(i32 argc, char** argv);
 

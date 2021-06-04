@@ -11,6 +11,8 @@ i32 platform_process_events();
 
 void platform_swap_buffers(struct Render_state* renderer);
 
+void platform_set_window_title(const char* title);
+
 void platform_close_window();
 
 #endif

@@ -18,6 +18,23 @@ i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
   return NoError;
 }
 
+void image_print_info(FILE* fp, Image* image) {
+  fprintf(fp,
+    "data:            %p\n"
+    "width:           %i\n"
+    "height:          %i\n"
+    "depth:           %i\n"
+    "pitch:           %i\n"
+    "bytes_per_pixel: %i",
+    image->data,
+    image->width,
+    image->height,
+    image->depth,
+    image->pitch,
+    image->bytes_per_pixel
+  );
+}
+
 i32 image_load(const char* path, Image* image) {
   char* ext = get_extension(path);
   if (!strcmp(ext, ".bmp")) {
@@ -32,7 +49,7 @@ i32 image_load(const char* path, Image* image) {
 Color_rgba* image_grab_pixel(Image* image, i32 x, i32 y) {
   Color_rgba* pixel = NULL;
   Color_rgba* pixels = (Color_rgba*)&image->data[0];
-  if (x < 0 || y < 0 || x > image->width || y > image->height) {
+  if (x < 0 || y < 0 || x >= image->width || y >= image->height) {
     return NULL;
   }
 

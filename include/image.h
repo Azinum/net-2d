@@ -29,6 +29,8 @@ typedef union Color_rgba {
 
 i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image);
 
+void image_print_info(FILE* fp, Image* image);
+
 i32 image_load(const char* path, Image* image);
 
 Color_rgba* image_grab_pixel(Image* image, i32 x, i32 y);
