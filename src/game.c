@@ -48,7 +48,7 @@ i32 game_init(Game_state* game) {
 #if 1
   for (i32 i = 0; i < 10; ++i) {
     Entity* e = game_add_entity();
-    entity_init(e, game->id, V2(rand() % 300, rand() % 300), V2(32, 32), FLAG_MOVER, ENTITY_NONE);
+    entity_init(e, game->id, V2(rand() % 300, rand() % 300), V2(16 + rand() % 64, 16 + rand() % 64), FLAG_MOVER, ENTITY_NONE);
     e->dir = V2(
       ((rand() % 100) - (rand() % 100)) / 100.0f,
       ((rand() % 100) - (rand() % 100)) / 100.0f
@@ -217,9 +217,8 @@ i32 client_parse_commands(Game_state* game) {
     i += command_size;
   }
 
-  net_buffer.count = 0; // Only reset the buffer when we have a successful non-partial parse
+  net_buffer.count = 0; // Only reset the buffer when we have a successful non-partially parsed buffer
 parsing_done:
-
   return NoError;
 }
 

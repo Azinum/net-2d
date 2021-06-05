@@ -79,10 +79,10 @@ void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint) {
   i32 w = (i32)size.w;
   i32 h = (i32)size.h;
 
-  for (i32 y = 0; y < w; ++y) {
-    uv.y = (float)y / w;
-    for (i32 x = 0; x < h; ++x) {
-      uv.x = (float)x / h;
+  for (i32 y = 0; y < h; ++y) {
+    uv.y = (float)y / h;
+    for (i32 x = 0; x < w; ++x) {
+      uv.x = (float)x / w;
       i32 x_sample = ((i32)(uv.x * image->width) % image->width);
       i32 y_sample = ((i32)(uv.y * image->height) % image->height);
       Color_rgba* pixel = image_grab_pixel(framebuffer, x + p.x, y + p.y);
