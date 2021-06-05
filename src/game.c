@@ -53,6 +53,7 @@ i32 game_init(Game_state* game) {
       ((rand() % 100) - (rand() % 100)) / 100.0f,
       ((rand() % 100) - (rand() % 100)) / 100.0f
     );
+    e->sprite_id = rand() % 2;
   }
 #endif
   return NoError;
@@ -247,34 +248,27 @@ i32 game_run_host(Game_state* game) {
     }
     game->time_stamp += game->dt;
 
-    double game_time_stamp = prev_game_time_stamp + NET_GAME_INTERVAL;
-    if (game->time_stamp >= game_time_stamp) {
-      game->dt = NET_GAME_INTERVAL;
-      double delta = game->time_stamp - game_time_stamp;
-      prev_game_time_stamp = game->time_stamp - delta;
-
-      double ping_time_stamp = prev_ping + NET_PING_INTERVAL;
-      if (game->time_stamp >= ping_time_stamp) {
-        double delta = game->time_stamp - ping_time_stamp;
-        prev_ping = game->time_stamp - delta;
-        u8 command = CMD_PING;
-        net_broadcast(&command, 1);
-      }
-
-      double net_time_stamp = prev_net_update + NET_INTERVAL;
-      if (game->time_stamp >= net_time_stamp) {
-        double delta = game->time_stamp - net_time_stamp;
-        prev_net_update = game->time_stamp - delta;
-        host_send_all_entities(game);
-        net_tick++;
-      }
-
-      for (i32 i = 0; i < game->entity_count; ++i) {
-        Entity* e = &game->entities[i];
-        entity_update(e, game);
-      }
-      net_clients_keep_alive(game->time_stamp, NET_MAX_DELTA);
+    double ping_time_stamp = prev_ping + NET_PING_INTERVAL;
+    if (game->time_stamp >= ping_time_stamp) {
+      double delta = game->time_stamp - ping_time_stamp;
+      prev_ping = game->time_stamp - delta;
+      u8 command = CMD_PING;
+      net_broadcast(&command, 1);
     }
+
+    double net_time_stamp = prev_net_update + NET_INTERVAL;
+    if (game->time_stamp >= net_time_stamp) {
+      double delta = game->time_stamp - net_time_stamp;
+      prev_net_update = game->time_stamp - delta;
+      host_send_all_entities(game);
+      net_tick++;
+    }
+
+    for (i32 i = 0; i < game->entity_count; ++i) {
+      Entity* e = &game->entities[i];
+      entity_update(e, game);
+    }
+    net_clients_keep_alive(game->time_stamp, NET_MAX_DELTA);
   }
   net_close(&socket_fd);
   pthread_join(host_select_thread, NULL);

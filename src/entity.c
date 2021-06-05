@@ -17,6 +17,7 @@ void entity_init(Entity* e, u32 id, v2 pos, v2 size, u32 flags, u32 type) {
   e->dir = V2(0, 0);
   e->flags = flags;
   e->type = type;
+  e->sprite_id = 0;
 }
 
 void entity_print_info(Entity* e, FILE* fp) {
@@ -64,6 +65,6 @@ void entity_update(Entity* e, Game_state* game) {
 }
 
 void entity_render(Entity* e, Game_state* game) {
-  render_texture(0, e->pos, e->size, ColorRGB(255, 255, 255));
+  render_sprite(0, e->sprite_id, e->pos, e->size, ColorRGB(255, 255, 255));
   render_quad_border(e->pos, e->size, ColorRGB(100, 100, 255));
 }

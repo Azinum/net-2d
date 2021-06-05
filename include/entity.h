@@ -22,6 +22,7 @@ typedef struct Entity {
   v2 dir;
   u32 flags;
   u32 type;
+  u16 sprite_id;
 } Entity;
 
 struct Game_state;

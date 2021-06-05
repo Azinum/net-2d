@@ -22,9 +22,9 @@ void render_quad(const v2 p, const v2 size, Color_rgba color);
 
 void render_quad_border(const v2 p, const v2 size, Color_rgba color);
 
-void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint);
+void render_image(Image* image, const v2 p, const v2 size, const v2 uv_offset, const v2 uv_range, Color_rgba tint);
 
-void render_texture(u32 texture_id, const v2 p, const v2 size, Color_rgba tint);
+void render_sprite(u32 spritesheet_id, u32 sprite_id, const v2 p, const v2 size, Color_rgba tint);
 
 void renderer_free(struct Render_state* renderer);
 

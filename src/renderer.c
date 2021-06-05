@@ -7,7 +7,7 @@
 
 Render_state render_state = {};
 Render_state* renderer = &render_state;
-Image shroom = {0};
+Image spritesheet = {0};
 
 static void switch_fb_target(Render_state* renderer);
 
@@ -22,7 +22,7 @@ i32 renderer_init(struct Render_state* renderer, i32 width, i32 height) {
   image_init(width, height, 4, &renderer->fb[0]);
   image_init(width, height, 4, &renderer->fb[1]);
   switch_fb_target(renderer);
-  image_load("resource/sprite/shroom.bmp", &shroom);
+  image_load("resource/sprite/spritesheet.bmp", &spritesheet);
   return NoError;
 }
 
@@ -67,22 +67,20 @@ void render_quad_border(const v2 p, const v2 size, Color_rgba color) {
   (void)steps;
 }
 
-void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint) {
+void render_image(Image* image, const v2 p, const v2 size, const v2 uv_offset, const v2 uv_range, Color_rgba tint) {
   Image* framebuffer = renderer->framebuffer;
 
   // Mask to eliminate purple "transparent" pixels
   const u32 elimination_mask = (0xff << 0) | (0x0 << 8) | (0xff << 16) | (0x0 << 24);
-
-  // TODO(lucas): Use screen boundaries to limit the area of pixels that we are iterating over
 
   v2 uv = V2(0, 0);
   i32 w = (i32)size.w;
   i32 h = (i32)size.h;
 
   for (i32 y = 0; y < h; ++y) {
-    uv.y = (float)y / h;
+    uv.y = ((float)y / h) * uv_range.y + uv_offset.y;
     for (i32 x = 0; x < w; ++x) {
-      uv.x = (float)x / w;
+      uv.x = ((float)x / w) * uv_range.x + uv_offset.x;
       i32 x_sample = ((i32)(uv.x * image->width) % image->width);
       i32 y_sample = ((i32)(uv.y * image->height) % image->height);
       Color_rgba* pixel = image_grab_pixel(framebuffer, x + p.x, y + p.y);
@@ -97,12 +95,20 @@ void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint) {
   }
 }
 
-void render_texture(u32 texture_id, const v2 p, const v2 size, Color_rgba tint) {
-  render_image(&shroom, p, size, tint);
+void render_sprite(u32 spritesheet_id, u32 sprite_id, const v2 p, const v2 size, Color_rgba tint) {
+  Image* texture = &spritesheet;
+#define SPRITE_WIDTH 16
+#define SPRITE_HEIGHT 16
+  // TODO(lucas): Handle "multi-line" spritesheet textures
+  float w_factor = (float)SPRITE_WIDTH / texture->width;
+  float h_factor = (float)SPRITE_HEIGHT / texture->height;
+  v2 uv_offset = V2(w_factor * sprite_id, 0);
+  v2 uv_range = V2(w_factor, h_factor);
+  render_image(texture, p, size, uv_offset, uv_range, tint);
 }
 
 void renderer_free(struct Render_state* renderer) {
   image_free(&renderer->fb[0]);
   image_free(&renderer->fb[1]);
-  image_free(&shroom);
+  image_free(&spritesheet);
 }
