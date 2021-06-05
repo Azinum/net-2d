@@ -210,7 +210,7 @@ i32 client_parse_commands(Game_state* game) {
     if (partial_packet) {
       i32 bytes_to_copy = net_buffer.count - i;
       net_buffer.count = 0;
-      buffer_write_data(&net_buffer, buffer, bytes_to_copy);
+      buffer_write_data(&net_buffer, buffer - 1, bytes_to_copy);
       net_buffer.count = bytes_to_copy;
       goto parsing_done;
     }

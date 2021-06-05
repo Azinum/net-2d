@@ -13,7 +13,7 @@
 #define NET_MAX_LATENCY 500.0f
 #define NET_PING_INTERVAL 0.5f
 #define NET_MAX_DELTA 5.0f
-#define NET_INTERVAL 1 / 20.0f
+#define NET_INTERVAL 1 / 60.0f
 
 #define NET_GAME_INTERVAL 1 / 60.0f
 
