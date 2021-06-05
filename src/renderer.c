@@ -44,27 +44,51 @@ void render_quad(const v2 p, const v2 size, Color_rgba color) {
   }
 }
 
+void render_quad_border(const v2 p, const v2 size, Color_rgba color) {
+  Image* framebuffer = renderer->framebuffer;
+
+  i32 steps = 0;
+  i32 w = (i32)size.w;
+  i32 h = (i32)size.h;
+  for (i32 y = 0; y < h; ++y) {
+    for (i32 x = 0; x < w; ++x) {
+      steps++;
+      if (x > 0 && y > 0 && x < w - 1 && y < h - 1) {
+        x = w - 2;
+        continue;
+      }
+      Color_rgba* pixel = image_grab_pixel(framebuffer, x + p.x, y + p.y);
+      if (pixel) {
+        *pixel = color;
+      }
+    }
+  }
+  (void)steps;
+}
+
 void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint) {
   Image* framebuffer = renderer->framebuffer;
 
   // Mask to eliminate purple "transparent" pixels
-  const u32 EliminationMask = (0xff << 0) | (0x0 << 8) | (0xff << 16) | (0x0 << 24);
+  const u32 elimination_mask = (0xff << 0) | (0x0 << 8) | (0xff << 16) | (0x0 << 24);
 
   // TODO(lucas): Use screen boundaries to limit the area of pixels that we are iterating over
 
   v2 uv = V2(0, 0);
+  i32 w = (i32)size.w;
+  i32 h = (i32)size.h;
 
-  for (i32 y = 0; y < size.w; ++y) {
-    uv.y = y / size.w;
-    for (i32 x = 0; x < size.h; ++x) {
-      uv.x = x / size.h;
+  for (i32 y = 0; y < w; ++y) {
+    uv.y = (float)y / w;
+    for (i32 x = 0; x < h; ++x) {
+      uv.x = (float)x / h;
       i32 x_sample = ((i32)(uv.x * image->width) % image->width);
       i32 y_sample = ((i32)(uv.y * image->height) % image->height);
       Color_rgba* pixel = image_grab_pixel(framebuffer, x + p.x, y + p.y);
       Color_rgba* texel = image_grab_pixel(image, x_sample, y_sample);
 
       if (pixel && texel) {
-        if (texel->value != EliminationMask) {
+        if (texel->value != elimination_mask) {
           *pixel = *texel;
         }
       }

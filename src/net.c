@@ -43,6 +43,7 @@ Client* client_find_by_fd(i32 fd) {
 
 i32 client_remove(Client* client) {
   *client = clients[--client_count];
+  printf("Remove client: %i\n", client->fd);
   return NoError;
 }
 
@@ -236,21 +237,11 @@ i32 net_client_add(i32 fd, u32 id, double time_stamp) {
 }
 
 i32 net_client_remove(i32 fd) {
-#if 0
-  for (i32 client_index = 0; client_index < client_count; ++client_index) {
-    Client* client = &clients[client_index];
-    if (client->fd == fd) {
-      *client = clients[--client_count];
-      return NoError;
-    }
-  }
-#else
   Client* client = client_find_by_fd(fd);
   if (client) {
     *client = clients[--client_count];
     return NoError;
   }
-#endif
   return Error;
 }
 
@@ -268,7 +259,6 @@ void net_clients_keep_alive(double time_stamp, double max_delta) {
     Client* client = &clients[client_index];
     float delta = time_stamp - client->time_stamp;
     if (delta >= max_delta) {
-      printf("Disconnect client: %i\n", client->fd);
       u8 byte = CMD_DISCONNECT;
       net_write(client->fd, &byte, 1);
       client_remove(client);

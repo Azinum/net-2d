@@ -20,6 +20,8 @@ void renderer_swap_buffers(struct Render_state* renderer);
 
 void render_quad(const v2 p, const v2 size, Color_rgba color);
 
+void render_quad_border(const v2 p, const v2 size, Color_rgba color);
+
 void render_image(Image* image, const v2 p, const v2 size, Color_rgba tint);
 
 void render_texture(u32 texture_id, const v2 p, const v2 size, Color_rgba tint);

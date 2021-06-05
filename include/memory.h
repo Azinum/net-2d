@@ -3,6 +3,8 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
+#include "common.h"
+
 i32 memory_total();
 
 i32 memory_num_blocks();

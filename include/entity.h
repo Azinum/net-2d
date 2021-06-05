@@ -19,6 +19,7 @@ typedef struct Entity {
   v2 pos;
   v2 target_pos;
   v2 size;
+  v2 dir;
   u32 flags;
   u32 type;
 } Entity;
@@ -27,6 +28,8 @@ struct Game_state;
 extern u32 you;
 
 void entity_init(Entity* e, u32 id, v2 pos, v2 size, u32 flags, u32 type);
+
+void entity_print_info(Entity* e, FILE* fp);
 
 void entity_update(Entity* e, struct Game_state* game);
 

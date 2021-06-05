@@ -9,6 +9,10 @@ i32 platform_open_window(i32 width, i32 height, const char* title);
 
 i32 platform_process_events();
 
+i32 platform_window_width();
+
+i32 platform_window_height();
+
 void platform_swap_buffers(struct Render_state* renderer);
 
 void platform_set_window_title(const char* title);

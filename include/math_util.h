@@ -15,4 +15,6 @@
   #include <xmmintrin.h>
 #endif
 
+extern float lerp(float V0, float V1, float T);
+
 #endif

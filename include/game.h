@@ -8,9 +8,10 @@
 #include "memory.h"
 #include "math_util.h"
 #include "entity.h"
+#include "log.h"
 #include "renderer.h"
 
-#define MAX_ENTITY 128
+#define MAX_ENTITY ((u8)128)
 
 typedef struct Game_state {
   double dt;

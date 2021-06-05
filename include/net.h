@@ -13,9 +13,15 @@
 enum Net_commands {
   CMD_BAD = 0,
 
+  // Bidirectional commands
   CMD_PING,
   CMD_DISCONNECT,
   CMD_MESSAGE,
+
+  // Client to server commands
+
+  // Server to client commands
+  CMD_UPDATE_ENTITY, // entity_index: u8, entity_count: u8, entity_data: struct Entity
 };
 
 typedef struct Client {

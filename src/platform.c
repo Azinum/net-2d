@@ -115,6 +115,14 @@ i32 platform_process_events() {
   return 0;
 }
 
+i32 platform_window_width() {
+  return win.width;
+}
+
+i32 platform_window_height() {
+  return win.height;
+}
+
 void platform_swap_buffers(struct Render_state* renderer) {
   win.image->data = (void*)renderer->framebuffer->data;
   XPutImage(win.display, win.window, win.graphics_context, win.image, 0, 0, 0, 0, renderer->framebuffer->width, renderer->framebuffer->height);
