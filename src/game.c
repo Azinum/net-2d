@@ -60,7 +60,6 @@ i32 game_init(Game_state* game) {
 
 i32 host_handle_new(i32 fd) {
   Game_state* game = &game_state;
-  printf("[server]: New connection: %i\n", fd);
 
   u8 write_buffer[NET_BUFFER_SIZE] = {};
 
@@ -104,6 +103,7 @@ i32 host_handle_connection(i32 fd) {
     }
   }
   else {
+    log_printf("Invalid connection, disconnecting... (%i)\n", fd);
     return Error;
   }
   return NoError;
@@ -157,14 +157,14 @@ i32 host_send_all_entities(Game_state* game) {
 i32 client_parse_commands(Game_state* game) {
   u8 byte = 0;
   u8* buffer = &net_buffer.data[0];
-  u8 uncomplete_packet = 0;
+  u8 partial_packet = 0;
   i32 command_size = 0;
 
   for (i32 i = 0; i < net_buffer.count; ++i) {
     command_size = 0;
-    uncomplete_packet = 0;
+    partial_packet = 0;
     buffer = &net_buffer.data[i];
-    byte = *buffer;
+    byte = *buffer++;
     switch (byte) {
       case CMD_PING: {
         u8 command = CMD_PING;
@@ -198,7 +198,7 @@ i32 client_parse_commands(Game_state* game) {
         }
         // This packet has not fully been recieved yet
         else {
-          uncomplete_packet = 1;
+          partial_packet = 1;
         }
         break;
       }
@@ -207,7 +207,7 @@ i32 client_parse_commands(Game_state* game) {
         break;
       }
     }
-    if (uncomplete_packet) {
+    if (partial_packet) {
       i32 bytes_to_copy = net_buffer.count - i;
       net_buffer.count = 0;
       buffer_write_data(&net_buffer, buffer, bytes_to_copy);
@@ -239,7 +239,6 @@ i32 game_run_host(Game_state* game) {
   pthread_create(&host_select_thread, NULL, net_host_select, (void*)&socket_fd);
 
   double prev_game_time_stamp = 0;
-
   while (game->running) {
     prev = now;
     gettimeofday(&now, NULL);
@@ -286,7 +285,6 @@ i32 game_run_host(Game_state* game) {
 i32 game_run_client(Game_state* game) {
   struct timeval now = {};
   struct timeval prev = {};
-
   char window_title[MAX_TITLE_LENGTH] = {0};
 
   u8 read_buffer[NET_BUFFER_SIZE] = {};
@@ -307,7 +305,6 @@ i32 game_run_client(Game_state* game) {
     if ((bytes_read = net_read(socket_fd, (void*)&read_buffer[0], NET_BUFFER_SIZE)) > 0) {
       buffer_write_data(&net_buffer, (void*)&read_buffer[0], bytes_read);
     }
-
     client_parse_commands(game);
 
     for (i32 i = 0; i < game->entity_count; ++i) {
@@ -315,6 +312,7 @@ i32 game_run_client(Game_state* game) {
       entity_update(e, game);
       entity_render(e, game);
     }
+
     snprintf(window_title, MAX_TITLE_LENGTH, "%s | %i fps | %g delta", TITLE, (i32)(1.0f / game->dt), game->dt);
     platform_set_window_title(window_title);
     renderer_swap_buffers(&render_state);
@@ -350,12 +348,10 @@ i32 game_start(i32 argc, char** argv) {
   }
 
   if (game->client) {
-#if 1
     const char* address = "127.0.0.1";
     printf("Connecting to server... (%s:%i)\n", address, PORT);
     net_connect(&socket_fd, address, PORT);
     printf("Successfully connected to server!\n");
-#endif
 
     platform_open_window(WINDOW_WIDTH, WINDOW_HEIGHT, TITLE);
     renderer_init(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);

@@ -6,8 +6,8 @@
 
 u32 you = 0;
 
-#define ENTITY_SPEED 100.0f
-#define INTERPOLATION_SPEED 12.0f
+#define ENTITY_SPEED 150.0f
+#define INTERPOLATION_SPEED 20.0f
 
 void entity_init(Entity* e, u32 id, v2 pos, v2 size, u32 flags, u32 type) {
   memset(e, 0, sizeof(Entity));
@@ -64,10 +64,6 @@ void entity_update(Entity* e, Game_state* game) {
 }
 
 void entity_render(Entity* e, Game_state* game) {
-#if 0
-  render_quad(e->pos, e->size, ColorRGB(255, 50, 50));
-#else
   render_texture(0, e->pos, e->size, ColorRGB(255, 255, 255));
   render_quad_border(e->pos, e->size, ColorRGB(100, 100, 255));
-#endif
 }

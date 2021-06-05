@@ -11,9 +11,10 @@ Image shroom = {0};
 
 static void switch_fb_target(Render_state* renderer);
 
+// Double buffering
 void switch_fb_target(Render_state* renderer) {
-  renderer->fb_target = !renderer->fb_target;
   renderer->framebuffer = &renderer->fb[renderer->fb_target];
+  renderer->fb_target = !renderer->fb_target;
 }
 
 i32 renderer_init(struct Render_state* renderer, i32 width, i32 height) {

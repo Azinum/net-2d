@@ -26,9 +26,10 @@ i32 buffer_init(Buffer* buffer) {
 
 i32 buffer_write_byte(Buffer* buffer, u8 byte) {
   if (buffer->count + 1 < buffer->size) {
-
+    buffer->data[buffer->count++] = byte;
   }
   else {
+    assert("buffer overflow" && 0);
     // Handle, resize buffer
   }
   return NoError;
@@ -49,7 +50,7 @@ i32 buffer_write_data(Buffer* buffer, void* data, i32 data_size) {
   }
   else {
     assert("buffer overflow" && 0);
-    // Handle by resizing the buffer
+    // Handle, resize buffer
     return Error;
   }
   return NoError;
